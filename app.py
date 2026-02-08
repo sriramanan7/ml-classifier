@@ -57,7 +57,7 @@ if data is not None:
         X_scaled = scaler.fit_transform(X)
         y = data['Diabetes_binary']
         #The full uploaded dataset is used for testing directly as model files are saved
-        X_test = X_scaled
+        X_test = pd.DataFrame(X_scaled, columns=X.columns)
         y_test = y
         st.write("### Model Evaluation:")
         
@@ -119,6 +119,7 @@ if data is not None:
         
 else:
     st.info("Please select a data source (Upload or Demo) to proceed.")
+
 
 
 
