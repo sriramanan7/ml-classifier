@@ -12,37 +12,58 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
+import joblib
+import os
 
 st.set_page_config(page_title="Diabetes Prediction Application", layout="wide")
 
-st.title("Classificaton Model Deployment: Diabetes Prediction")
+st.title("Diabetes Prediction Application")
 st.write("This application demonstrates various classification models on the Diabetes Health Indicators Dataset.")
 
-# Sidebar
-st.sidebar.header("User Input Features")
+st.sidebar.title("Options")
 
-# 1. Dataset Upload
-uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
+#Data source selection
+data_source = st.sidebar.radio("Select Data Source", ["Upload CSV", "Use Demo Data"])
 
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)
-    st.write("### Dataset Preview")
-    st.write(data.head())
+data = None
+
+if data_source == "Upload CSV":
+    st.sidebar.info("Upload the diabetes dataset (CSV)")
+    uploaded_file = st.sidebar.file_uploader("Choose file", type=["csv"])
+    if uploaded_file is not None:
+        try:
+            data = pd.read_csv(uploaded_file)
+        except Exception as e:
+            st.error(f"Error reading file: {e}")
+else:
+    st.sidebar.info("Using demo dataset")
+    github_url = "https://raw.githubusercontent.com/sriramanan7/ml-classifier/main/test_data_small.csv"
+    
+    try:
+        data = pd.read_csv(github_url)
+        st.sidebar.success("Loaded data from GitHub!")
+    except Exception as e:
+        st.error("Could not load data from GitHub. Please upload a CSV.")
+        st.error(f"GitHub Error: {e}")
+
+if data is not None:
+    st.write("### 1. Dataset Preview")
+    st.dataframe(data.head())
     
     # Preprocessing
     if 'Diabetes_binary' in data.columns:
         X = data.drop('Diabetes_binary', axis=1)
-        y = data['Diabetes_binary']
-        
-        # Scaling
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
-        
-        X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+        y = data['Diabetes_binary']
+        #The full uploaded dataset is used for testing directly as model files are saved
+        X_test = X_scaled
+        y_test = y
+        st.write("### 2. Model Evaluation")
         
         # Model Selection
-        model_name = st.sidebar.selectbox(
-            "Select Classifier",
+        model_name = st.selectbox(
+            "Select Classifier Model",
             ("Logistic Regression", "Decision Tree", "KNN", "Naive Bayes", "Random Forest", "XGBoost")
         )
         
@@ -56,42 +77,44 @@ if uploaded_file is not None:
             "XGBoost": "xgboost.pkl"
         }
         
-        import joblib
-        import os
 
-        if st.sidebar.button("Predict & Evaluate"):
-            # Simple way to check and load model
+
+        if st.button(f"Run {model_name}"):
             model_file = model_files[model_name]
             model_path = os.path.join("model", model_file)
             
             if os.path.exists(model_path):
                 # Load the saved model
-                model = joblib.load(model_path)
-                
-                # Make predictions
-                y_pred = model.predict(X_test)
-                acc = accuracy_score(y_test, y_pred)
-                
-                st.write(f"## Model: {model_name}")
-                st.write(f"### Accuracy: {acc:.4f}")
-                
-                # Show Metrics
-                st.write("### Classification Report")
-                st.text(classification_report(y_test, y_pred))
-                
-                # Show Confusion Matrix
-                st.write("### Confusion Matrix")
-                cm = confusion_matrix(y_test, y_pred)
-                fig, ax = plt.subplots()
-                sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax)
-                st.pyplot(fig)
-                
+                try:
+                    model = joblib.load(model_path)
+                    
+                    # Make predictions
+                    y_pred = model.predict(X_test)
+                    acc = accuracy_score(y_test, y_pred)
+                    
+                    st.success(f"Results for **{model_name}**")
+                    st.metric("Accuracy: ", f"{acc:.4f}")
+                    
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.write("#### Classification Report")
+                        report = classification_report(y_test, y_pred, output_dict=True)
+                        st.dataframe(pd.DataFrame(report).transpose().style.format("{:.2f}"))
+                    
+                    with col2:
+                        cm = confusion_matrix(y_test, y_pred)
+                        fig, ax = plt.subplots(figsize=(4, 3))
+                        sns.heatmap(cm, annot=True, fmt='d', cmap='Reds', ax=ax)
+                        st.pyplot(fig)
+                        
+                except Exception as e:
+                    st.error(f"Error running model: {e}")
             else:
-                st.error(f"File '{model_file}' not found in 'model' folder.")
-                st.write("Please run the notebook to generate model files first.")
+                st.error(f"Model file '{model_file}' not found in 'model' folder.")
                 
     else:
         st.error("Dataset must contain 'Diabetes_binary' column for this demo.")
         
 else:
-    st.info("Awaiting for CSV file to be uploaded. Please upload the test dataset.")
+    st.info("Please select a data source (Upload or Demo) to proceed.")
