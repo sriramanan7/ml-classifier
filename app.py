@@ -105,7 +105,7 @@ if data is not None:
                     with col2:
                         st.write("#### Confusion Matrix")
                         cm = confusion_matrix(y_test, y_pred)
-                        fig, ax = plt.subplots(figsize=(20, 10))
+                        fig, ax = plt.subplots(figsize=(10, 4))
                         sns.heatmap(cm, annot=True, fmt='d', cmap='Reds', ax=ax)
                         st.pyplot(fig)
                         
@@ -119,6 +119,7 @@ if data is not None:
         
 else:
     st.info("Please select a data source (Upload or Demo) to proceed.")
+
 
 
 
