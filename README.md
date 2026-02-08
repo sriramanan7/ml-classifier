@@ -24,7 +24,7 @@ Implemented 6 different classification models. Below is the performance comparis
 | XGBoost | 0.7483 | 0.8247 | 0.7291 | 0.7901 | 0.7584 | 0.4983 |
 
 
-## Observations
+## 4. Observations
 
 | ML Model Name | Observation about model performance |
 |---|---|
@@ -34,3 +34,4 @@ Implemented 6 different classification models. Below is the performance comparis
 | **Naive Bayes** | Good performance and fast to train, but assumes independence between features which might not be accurate as there are correlated features. |
 | **Random Forest (Ensemble)** | Improved significantly over Decision Tree (approx 73% accuracy) by reducing variance, showing the power of bagging. |
 | **XGBoost (Ensemble)** |  Best model for this dataset, alongside Logistic Regression, effectively capturing complex patterns through boosting. Accuracy is around 74% which is on par with logistic regression. But Recall is better (79%), and recall is the metric to look out for in medical field. |
+
