@@ -20,7 +20,7 @@ Implemented 6 different classification models. Below is the performance comparis
 | Decision Tree | 0.6516 | 0.6518 | 0.6556 | 0.6387 | 0.6470 | 0.3033 |
 | KNN | 0.7129 | 0.7712 | 0.7024 | 0.7387 | 0.7201 | 0.4264 |
 | Naive Bayes | 0.7153 | 0.7837 | 0.7206 | 0.7032 | 0.7118 | 0.4308 |
-| Random Forest | 0.7331 | 0.8099 | 0.7176 | 0.7687 | 0.7423 | 0.4675 |
+| Random Forest | 0.7487 | 0.8269 | 0.7287 | 0.7926 | 0.7593 | 0.4994 |
 | XGBoost | 0.7483 | 0.8247 | 0.7291 | 0.7901 | 0.7584 | 0.4983 |
 
 
@@ -32,6 +32,5 @@ Implemented 6 different classification models. Below is the performance comparis
 | **Decision Tree** | Lowest performance (approx 65% accuracy), likely due to overfitting on the training data. Decision trees are usually prone to overfitting. |
 | **KNN** | Moderate performance (71% accuracy), but can be computationally expensive and sensitive to the scale of data. |
 | **Naive Bayes** | Good performance and fast to train, but assumes independence between features which might not be accurate as there are correlated features. |
-| **Random Forest (Ensemble)** | Improved significantly over Decision Tree (approx 73% accuracy) by reducing variance, showing the power of bagging. |
+| **Random Forest (Ensemble)** | Improved significantly over Decision Tree (approx 74% accuracy) by reducing variance, showing the power of bagging. |
 | **XGBoost (Ensemble)** |  Best model for this dataset, alongside Logistic Regression, effectively capturing complex patterns through boosting. Accuracy is around 74% which is on par with logistic regression. But Recall is better (79%), and recall is the metric to look out for in medical field. |
-
