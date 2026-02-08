@@ -41,13 +41,13 @@ else:
     
     try:
         data = pd.read_csv(github_url)
-        st.sidebar.success("Loaded data from GitHub!")
+        st.sidebar.info("Loaded data from GitHub")
     except Exception as e:
         st.error("Could not load data from GitHub. Please upload a CSV.")
         st.error(f"GitHub Error: {e}")
 
 if data is not None:
-    st.write("### 1. Dataset Preview")
+    st.write("### Dataset Preview:")
     st.dataframe(data.head())
     
     # Preprocessing
@@ -59,7 +59,7 @@ if data is not None:
         #The full uploaded dataset is used for testing directly as model files are saved
         X_test = X_scaled
         y_test = y
-        st.write("### 2. Model Evaluation")
+        st.write("### Model Evaluation:")
         
         # Model Selection
         model_name = st.selectbox(
@@ -79,7 +79,7 @@ if data is not None:
         
 
 
-        if st.button(f"Run {model_name}"):
+        if st.button(f"Predict and Evaluate"):
             model_file = model_files[model_name]
             model_path = os.path.join("model", model_file)
             
@@ -103,8 +103,9 @@ if data is not None:
                         st.dataframe(pd.DataFrame(report).transpose().style.format("{:.2f}"))
                     
                     with col2:
+                        st.write("#### Confusion Matrix")
                         cm = confusion_matrix(y_test, y_pred)
-                        fig, ax = plt.subplots(figsize=(4, 3))
+                        fig, ax = plt.subplots(figsize=(2, 1))
                         sns.heatmap(cm, annot=True, fmt='d', cmap='Reds', ax=ax)
                         st.pyplot(fig)
                         
@@ -118,3 +119,4 @@ if data is not None:
         
 else:
     st.info("Please select a data source (Upload or Demo) to proceed.")
+
